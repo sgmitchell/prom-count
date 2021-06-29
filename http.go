@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	_ "net/http/pprof"
+	"time"
 
 	"github.com/prometheus/prometheus/prompb"
 )
@@ -30,6 +31,18 @@ type Receiver struct {
 }
 
 func NewReceiver(trackers ...tracker.Tracker) *Receiver {
+	for _, tmp := range trackers {
+		go func(t tracker.Tracker) {
+			t.CalculateMetrics()
+			ticker := time.NewTicker(15 * time.Second)
+			for {
+				select {
+				case <-ticker.C:
+					t.CalculateMetrics()
+				}
+			}
+		}(tmp)
+	}
 	return &Receiver{
 		trackers: trackers,
 	}

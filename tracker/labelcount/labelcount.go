@@ -44,6 +44,7 @@ func NewTracker(ttl time.Duration, labels ...string) *Tracker {
 		Name: "metric_count",
 		Help: fmt.Sprintf("the number of metrics observed in the last %s for the given %s_ labels", ttl, LabelPrefix),
 	}, labelNames)
+	prometheus.MustRegister(metric)
 
 	return &Tracker{
 		ttl:           ttl,

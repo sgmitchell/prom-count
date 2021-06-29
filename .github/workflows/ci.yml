@@ -1,0 +1,26 @@
+name: CI Pipeline
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: {}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+      - name: Docker Build
+        run: make build
+      - name: Formatting and Linting
+        run: make lint
+      - name: Ensure properly formatted
+        run: git diff --exit-code
+      - name: Test
+        run: make test

@@ -1,4 +1,5 @@
 # https://docs.github.com/en/actions/guides/publishing-docker-images#publishing-images-to-github-packages
+# https://github.com/docker/build-push-action/blob/master/docs/advanced/multi-platform.md
 name: Docker Build and Push
 
 on:
@@ -17,6 +18,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
       - name: Log in to the Container registry
         uses: docker/login-action@v1
@@ -38,3 +45,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
